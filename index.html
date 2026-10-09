@@ -1,0 +1,694 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iris Bloom | Flower Predictor</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --purple: #7867d9;
+    --purple-dark: #5c4db6;
+    --lavender: #f0edff;
+    --pink: #ffe8f0;
+    --mint: #e0f7ed;
+    --ink: #292742;
+    --muted: #85839b;
+    --white: #ffffff;
+    --line: #eae8f3;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    background: #faf9ff;
+    min-height: 100vh;
+}
+
+button, input {
+    font: inherit;
+}
+
+.page {
+    max-width: 1160px;
+    margin: auto;
+    padding: 25px 28px 45px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.logo {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    background: var(--lavender);
+    border-radius: 15px;
+    font-size: 23px;
+}
+
+.status {
+    border: 1px solid var(--line);
+    background: white;
+    color: #6e6791;
+    border-radius: 30px;
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #5cb995;
+    margin-right: 6px;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 35px;
+    align-items: center;
+    margin-bottom: 38px;
+}
+
+.eyebrow {
+    color: var(--purple);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 13px;
+}
+
+h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.12;
+    letter-spacing: -1.5px;
+    margin-bottom: 17px;
+}
+
+h1 span {
+    color: var(--purple);
+}
+
+.hero p {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 14px;
+    max-width: 490px;
+}
+
+.flower-art {
+    min-height: 220px;
+    border-radius: 30px;
+    background: linear-gradient(140deg, #eee9ff, #fceaf3 60%, #e4f8ef);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.flower {
+    font-size: 115px;
+    filter: drop-shadow(0 10px 12px #8e76bd35);
+}
+
+.art-note {
+    position: absolute;
+    bottom: 14px;
+    right: 16px;
+    background: #ffffffc9;
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 23px;
+    padding: 25px;
+    box-shadow: 0 8px 35px #35305b08;
+}
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 7px;
+}
+
+h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.step {
+    color: var(--purple);
+    background: var(--lavender);
+    padding: 6px 10px;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.subtext {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 19px 15px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 9px;
+}
+
+.field input {
+    width: 100%;
+    padding: 13px 12px;
+    border: 1px solid #e7e4f1;
+    background: #fcfbff;
+    border-radius: 12px;
+    outline: none;
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.field input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px #7867d918;
+}
+
+.unit {
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 6px;
+}
+
+.predict-btn {
+    margin-top: 25px;
+    width: 100%;
+    border: none;
+    border-radius: 13px;
+    padding: 15px;
+    color: white;
+    background: var(--purple);
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.predict-btn:hover {
+    background: var(--purple-dark);
+}
+
+.predict-btn:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
+.reset-btn {
+    margin-top: 12px;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    background: white;
+    color: var(--muted);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.result-card {
+    background: #f4f1ff;
+    border: 1px solid #e8e2ff;
+    border-radius: 18px;
+    padding: 22px;
+    margin-top: 20px;
+}
+
+.result-label {
+    font-size: 11px;
+    color: #7d73a9;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.result-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 25px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.result-description {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #77718f;
+    margin-top: 7px;
+}
+
+.result-icon {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.placeholder {
+    border: 1px dashed #d9d3ed;
+    border-radius: 15px;
+    padding: 25px 16px;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--muted);
+}
+
+.placeholder .big-icon {
+    font-size: 37px;
+    margin-bottom: 8px;
+}
+
+.placeholder strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.placeholder p {
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.hidden {
+    display: none;
+}
+
+.error {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #fff0f0;
+    color: #ad4141;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.species-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.species {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--line);
+    padding: 12px;
+    border-radius: 13px;
+}
+
+.species-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 19px;
+}
+
+.species:nth-child(1) .species-icon {
+    background: var(--pink);
+}
+
+.species:nth-child(2) .species-icon {
+    background: var(--lavender);
+}
+
+.species:nth-child(3) .species-icon {
+    background: var(--mint);
+}
+
+.species strong {
+    display: block;
+    font-size: 12px;
+}
+
+.species small {
+    color: var(--muted);
+    font-size: 10px;
+    display: block;
+    margin-top: 4px;
+}
+
+footer {
+    text-align: center;
+    color: #a09cb3;
+    font-size: 11px;
+    margin-top: 32px;
+}
+
+@media (max-width: 760px) {
+    .page {
+        padding: 18px 15px 30px;
+    }
+
+    nav {
+        margin-bottom: 30px;
+    }
+
+    .hero, .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        gap: 22px;
+    }
+
+    .flower-art {
+        min-height: 165px;
+    }
+
+    .flower {
+        font-size: 85px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 380px) {
+    .fields {
+        grid-template-columns: 1fr;
+    }
+
+    .status {
+        font-size: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+    <nav>
+        <div class="brand">
+            <div class="logo">🌸</div>
+            Iris Bloom
+        </div>
+        <div class="status">
+            <span class="status-dot"></span> ML Predictor
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div>
+            <div class="eyebrow">A little botany, a little AI</div>
+            <h1>Every flower has a <span>story.</span></h1>
+            <p>
+                Enter the measurements of an iris flower and let your
+                machine learning model identify its species.
+                Simple science, beautifully presented.
+            </p>
+        </div>
+
+        <div class="flower-art">
+            <div class="flower">🌺</div>
+            <div class="art-note">✿ Nature meets intelligence</div>
+        </div>
+    </section>
+
+    <main class="layout">
+        <section class="card">
+            <div class="card-heading">
+                <h2>Flower measurements</h2>
+                <span class="step">STEP 01</span>
+            </div>
+
+            <p class="subtext">
+                Enter all four measurements in centimeters.
+                Use the same feature names as your trained model.
+            </p>
+
+            <form id="irisForm">
+                <div class="fields">
+                    <div class="field">
+                        <label for="sepal_length">Sepal length</label>
+                        <input id="sepal_length" name="sepal_length"
+                               type="number" min="0.1" max="10"
+                               step="any" placeholder="e.g. 5.1" required>
+                        <div class="unit">cm · Length of the sepal</div>
+                    </div>
+
+                    <div class="field">
+                        <label for="sepal_width">Sepal width</label>
+                        <input id="sepal_width" name="sepal_width"
+                               type="number" min="0.1" max="10"
+                               step="any" placeholder="e.g. 3.5" required>
+                        <div class="unit">cm · Width of the sepal</div>
+                    </div>
+
+                    <div class="field">
+                        <label for="petal_length">Petal length</label>
+                        <input id="petal_length" name="petal_length"
+                               type="number" min="0.1" max="10"
+                               step="any" placeholder="e.g. 1.4" required>
+                        <div class="unit">cm · Length of the petal</div>
+                    </div>
+
+                    <div class="field">
+                        <label for="petal_width">Petal width</label>
+                        <input id="petal_width" name="petal_width"
+                               type="number" min="0.1" max="10"
+                               step="any" placeholder="e.g. 0.2" required>
+                        <div class="unit">cm · Width of the petal</div>
+                    </div>
+                </div>
+
+                <button class="predict-btn" id="predictBtn" type="submit">
+                    Identify my flower ✨
+                </button>
+
+                <button class="reset-btn" id="resetBtn" type="reset">
+                    Clear measurements
+                </button>
+            </form>
+
+            <div id="errorBox" class="error hidden" role="alert"></div>
+        </section>
+
+        <aside class="card">
+            <div class="card-heading">
+                <h2>Your result</h2>
+                <span class="step">STEP 02</span>
+            </div>
+
+            <p class="subtext">
+                Your model's predicted iris species will appear here.
+            </p>
+
+            <div id="placeholder" class="placeholder">
+                <div class="big-icon">🔎</div>
+                <strong>Waiting for your flower</strong>
+                <p>Fill in the measurements and click identify<br>
+                   to get a real model prediction.</p>
+            </div>
+
+            <div id="resultCard" class="result-card hidden" aria-live="polite">
+                <div class="result-icon" id="resultIcon">🌸</div>
+                <div class="result-label">Predicted species</div>
+                <div class="result-name" id="resultName">—</div>
+                <p class="result-description" id="resultDescription"></p>
+            </div>
+
+            <div class="species-list">
+                <div class="species">
+                    <div class="species-icon">🌷</div>
+                    <div>
+                        <strong>Iris Setosa</strong>
+                        <small>Often has shorter petals</small>
+                    </div>
+                </div>
+
+                <div class="species">
+                    <div class="species-icon">🌸</div>
+                    <div>
+                        <strong>Iris Versicolor</strong>
+                        <small>Typically medium-sized petals</small>
+                    </div>
+                </div>
+
+                <div class="species">
+                    <div class="species-icon">🌺</div>
+                    <div>
+                        <strong>Iris Virginica</strong>
+                        <small>Often has larger petals</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        Iris Bloom · Powered by your trained machine learning model
+    </footer>
+</div>
+
+<script>
+const form = document.getElementById("irisForm");
+const predictBtn = document.getElementById("predictBtn");
+const errorBox = document.getElementById("errorBox");
+const resultCard = document.getElementById("resultCard");
+const placeholder = document.getElementById("placeholder");
+
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    errorBox.classList.add("hidden");
+    resultCard.classList.add("hidden");
+
+    const payload = {
+        sepal_length: Number(form.sepal_length.value),
+        sepal_width: Number(form.sepal_width.value),
+        petal_length: Number(form.petal_length.value),
+        petal_width: Number(form.petal_width.value)
+    };
+
+    for (const [key, value] of Object.entries(payload)) {
+        if (!Number.isFinite(value) || value <= 0) {
+            showError("Please enter a valid positive number for every measurement.");
+            return;
+        }
+    }
+
+    predictBtn.disabled = true;
+    predictBtn.textContent = "Identifying flower...";
+
+    try {
+        const response = await fetch("/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.error || `Request failed (${response.status}).`);
+        }
+
+        // Support common backend response keys.
+        const species = data.species ?? data.prediction ?? data.predicted_class;
+
+        if (species === undefined || species === null) {
+            throw new Error(
+                "Backend responded but did not return a species. " +
+                "Return { species: 'Iris-setosa' } or update this frontend " +
+                "to match your backend response."
+            );
+        }
+
+        const name = String(species).replaceAll("_", " ").replaceAll("-", " ");
+        const normalized = name.toLowerCase();
+
+        let icon = "🌸";
+        let description = "Your model has returned this species.";
+
+        if (normalized.includes("setosa")) {
+            icon = "🌷";
+            description = "The model identified this flower as Iris Setosa.";
+        } else if (normalized.includes("versicolor")) {
+            icon = "🌸";
+            description = "The model identified this flower as Iris Versicolor.";
+        } else if (normalized.includes("virginica")) {
+            icon = "🌺";
+            description = "The model identified this flower as Iris Virginica.";
+        }
+
+        document.getElementById("resultIcon").textContent = icon;
+        document.getElementById("resultName").textContent = name;
+        document.getElementById("resultDescription").textContent = description;
+
+        placeholder.classList.add("hidden");
+        resultCard.classList.remove("hidden");
+
+    } catch (error) {
+        showError(
+            error.message.includes("Failed to fetch")
+                ? "Couldn't connect to /predict. Start your backend and make sure this page is served by the same Flask app."
+                : error.message
+        );
+    } finally {
+        predictBtn.disabled = false;
+        predictBtn.textContent = "Identify my flower ✨";
+    }
+});
+
+function showError(message) {
+    errorBox.textContent = message;
+    errorBox.classList.remove("hidden");
+}
+
+form.addEventListener("reset", function() {
+    errorBox.classList.add("hidden");
+    resultCard.classList.add("hidden");
+    placeholder.classList.remove("hidden");
+});
+</script>
+</body>
+</html>
